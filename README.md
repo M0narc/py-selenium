@@ -1,5 +1,5 @@
 # py-selenium
-selenium framework para trabajar sobre un ecommerce de practica
+selenium framework para trabajar trabajar sobre cualquier sitio.
 * Patron de diseño POM
 * Usamos webdriver_manager para manejar los browsers
 * Allure para guardar informacion
@@ -7,12 +7,20 @@ selenium framework para trabajar sobre un ecommerce de practica
 * pytest y pytest-html
 * request para usar apis mas adelante
 * pandas y faker, instalado, ya que este va a ser un esqueleto para futuros proyectos.
+* implementamos loggers para trazabilidad
 
 
-# Los test los corro asi
+# Run tests through console ->
 pytest --browser=chrome
  o
 pytest --browser=firefox
+
+# If you want to run a particular test on the console you can do it like this ->
+
+pytest tests/login/test_login.py --browser=chrome
+if you want to run it and see the logs
+pytest -s tests/home/test_home_page.py --browser=chrome
+
 
 
 # TODO
