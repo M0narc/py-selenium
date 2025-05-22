@@ -50,7 +50,7 @@ Test Data Factories (con Faker)
 
 
 # Esqueleto
-
+```
 selenium_framework/
 ├── conftest.py                     # Configuraciones globales para pytest
 ├── requirements.txt               # Dependencias
@@ -78,3 +78,4 @@ selenium_framework/
 │   └── report.html                # Resultados (allure o html)
 └── data/
     └── users.json                 # Datos de prueba (puede venir de Excel, CSV, etc.)
+```
