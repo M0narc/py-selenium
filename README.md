@@ -18,9 +18,23 @@ pytest --browser=firefox
 # If you want to run a particular test on the console you can do it like this ->
 
 pytest tests/login/test_login.py --browser=chrome
-if you want to run it and see the logs
+
+# if you want to run it and see the logs
+
 pytest -s tests/home/test_home_page.py --browser=chrome
 
+# If you want to run it, see the logs and make it headless
+
+pytest -s tests/home/test_home_page.py --browser=chrome --headless
+
+
+# Using the Makefile
+
+make test
+
+make test-headless
+
+make test-ci
 
 
 # TODO
