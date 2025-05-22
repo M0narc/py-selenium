@@ -36,6 +36,22 @@ make test-headless
 
 make test-ci
 
+make test-allure
+
+make report
+
+make open-report
+
+
+# Allure
+
+pytest --alluredir=reports/allure-results
+
+allure generate reports/allure-results -o reports/allure-report --clean
+
+allure open reports/allure-report
+
+
 
 # TODO
 Allure para reportes detallados: pytest --alluredir=allure-results
@@ -45,8 +61,6 @@ Integración con Docker para ejecución aislada
 Uso de .env para credenciales
 
 Test Data Factories (con Faker)
-
-
 
 
 # Esqueleto
