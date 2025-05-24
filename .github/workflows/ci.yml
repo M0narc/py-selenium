@@ -25,7 +25,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          tags: selenium-tests
+          tags: selenium-
+          load: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
