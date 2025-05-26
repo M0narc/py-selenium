@@ -1,4 +1,3 @@
-# .github/workflows/ci.yml
 name: Selenium CI
 
 on: [push, pull_request]
