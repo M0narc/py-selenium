@@ -8,21 +8,24 @@ on:
 
 jobs:
   deploy:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Download Pages artifact
-        uses: actions/download-artifact@v4
+      - name: Download allure-report artifact from previous workflow
+        uses: marvinpinto/action-download-artifact@v3
         with:
           name: allure-report
+          workflow: Selenium CI
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: reports/allure-report
+
+      - name: Upload report to Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
           path: reports/allure-report
 
       - name: Deploy to GitHub Pages
