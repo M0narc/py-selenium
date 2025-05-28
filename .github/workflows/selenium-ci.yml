@@ -1,11 +1,12 @@
-name: Selenium CI
+name: Selenium CI + Deploy
 
 on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    outputs:
+      should_deploy: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -32,9 +33,7 @@ jobs:
 
       - name: Run tests in Docker
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/reports:/app/reports \
-            selenium-tests
+          docker run --rm -v ${{ github.workspace }}/reports:/app/reports selenium-tests
 
       - name: Ensure Allure report exists
         run: |
@@ -48,9 +47,26 @@ jobs:
         with:
           name: allure-report
           path: reports/allure-report
-          retention-days: 1
 
       - name: Upload report to Pages artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
