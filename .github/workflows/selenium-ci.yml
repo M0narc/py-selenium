@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  test-and-deploy:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +29,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-
 
-      - name: Build Docker image for tests
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -38,23 +38,40 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-      - name: Run Selenium tests
+      - name: Run tests and generate Allure results
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/reports:/app/reports \
             selenium-tests
 
-      - name: Ensure Allure report exists
+      - name: Generate Allure report
         run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/reports:/app/reports \
+            selenium-tests \
+            allure generate /app/reports -o /app/reports/allure-report --clean
+
+      - name: Verify report exists
+        run: |
+          ls -la reports/allure-report/
           if [ ! -f reports/allure-report/index.html ]; then
-            echo "❌ Allure report not generated!"
+            echo "❌ Allure report not found!"
             exit 1
           fi
 
-      - name: Upload Allure report to Pages artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
 
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v3
