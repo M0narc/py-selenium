@@ -55,6 +55,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
+          retention-days: 1
+          name: github-pages   
 
   deploy:
     if: github.ref == 'refs/heads/main'
