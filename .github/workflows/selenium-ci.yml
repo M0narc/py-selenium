@@ -1,12 +1,19 @@
-name: Selenium CI + Deploy
+name: Selenium CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    outputs:
-      should_deploy: ${{ github.ref == 'refs/heads/main' }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -19,8 +26,7 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
+          restore-keys: ${{ runner.os }}-docker-
 
       - name: Build Docker image for tests
         uses: docker/build-push-action@v5
@@ -31,42 +37,13 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-      - name: Run tests in Docker
+      - name: Run tests
         run: |
-          docker run --rm -v ${{ github.workspace }}/reports:/app/reports selenium-tests
+          docker run --rm \
+            -v ${{ github.workspace }}/reports:/app/reports \
+            selenium-tests
 
-      - name: Ensure Allure report exists
-        run: |
-          if [ ! -f reports/allure-report/index.html ]; then
-            echo "❌ Allure report not generated!"
-            exit 1
-          fi
-
-      - name: Upload Allure report as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: reports/allure-report
-
-      - name: Upload report to Pages artifact
-        if: github.ref == 'refs/heads/main'
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
-
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v3
