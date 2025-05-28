@@ -1,4 +1,4 @@
-name: Selenium CI
+name: Selenium CI + Allure Deploy
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  test:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +26,8 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-docker-
+          restore-keys: |
+            ${{ runner.os }}-docker-
 
       - name: Build Docker image for tests
         uses: docker/build-push-action@v5
@@ -37,13 +38,23 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-      - name: Run tests
+      - name: Run Selenium tests
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/reports:/app/reports \
             selenium-tests
 
-      - name: Upload Pages artifact
+      - name: Ensure Allure report exists
+        run: |
+          if [ ! -f reports/allure-report/index.html ]; then
+            echo "❌ Allure report not generated!"
+            exit 1
+          fi
+
+      - name: Upload Allure report to Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v3
