@@ -48,6 +48,7 @@ jobs:
         with:
           name: allure-report
           path: reports/allure-report
+          retention-days: 1
 
       - name: Upload report to Pages artifact
         uses: actions/upload-pages-artifact@v3
