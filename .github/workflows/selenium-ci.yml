@@ -40,6 +40,7 @@ jobs:
 
       - name: Run tests and generate Allure results
         run: |
+          mkdir -p reports
           docker run --rm \
             -v ${{ github.workspace }}/reports:/app/reports \
             selenium-tests
@@ -48,23 +49,24 @@ jobs:
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/reports:/app/reports \
-            selenium-tests \
-            allure generate /app/reports -o /app/reports/allure-report --clean
+            mcr.microsoft.com/playwright:v1.39.0-focal \
+            bash -c "apt-get update && apt-get install -y allure && \
+            allure generate /app/reports -o /app/reports/allure-report --clean"
 
-      - name: Verify report exists
+      - name: Verify report structure
         run: |
-          ls -la reports/allure-report/
-          if [ ! -f reports/allure-report/index.html ]; then
-            echo "❌ Allure report not found!"
-            exit 1
-          fi
+          echo "=== Estructura del reporte ==="
+          find reports/allure-report -type f
+          [ -f reports/allure-report/index.html ] || exit 1
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
+          retention-days: 1
 
   deploy:
+    timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
