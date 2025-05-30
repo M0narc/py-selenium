@@ -6,15 +6,22 @@ on:
   pull_request:
 
 permissions:
-  contents: write  # Required to push to gh-pages
+  contents: write  # needed to push to gh-pages
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Checkout GitHub Pages with previous Allure reports
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages-dir
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -36,24 +43,27 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-      - name: Run Selenium tests
+      - name: Run Selenium tests and store Allure results
         run: |
+          mkdir -p allure-results
           docker run --rm \
-            -v ${{ github.workspace }}/reports:/app/reports \
+            -v ${{ github.workspace }}/allure-results:/app/allure-results \
             selenium-tests
 
-      - name: Ensure Allure report exists
-        run: |
-          if [ ! -f reports/allure-report/index.html ]; then
-            echo "❌ Allure report not generated!"
-            exit 1
-          fi
+      - name: Generate Allure test report with history
+        uses: andgineer/allure-report@v3.6
+        id: allure-report
+        if: always()
+        with:
+          allure-results: allure-results
+          website: gh-pages-dir
+          reports-site-path: builds/tests
 
       - name: Publish Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        if: always()
+        if: ${{ always() && (steps.allure-report.outcome == 'success') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: reports/allure-report
-          commit_message: "chore: deploy Allure report 🚀"
+          publish_dir: ${{ steps.allure-report.outputs.reports-site }}
+          destination_dir: ${{ steps.allure-report.outputs.reports-site-path }}
