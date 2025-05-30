@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write  # necesario para pushear a gh-pages
+  contents: write  # para push a gh-pages
 
 jobs:
   test:
@@ -16,54 +16,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Checkout GitHub Pages with previous Allure reports
-        uses: actions/checkout@v4
-        continue-on-error: true
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
         with:
-          ref: gh-pages
-          path: gh-pages-dir
+          python-version: "3.9"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-
-      - name: Build Docker image for tests
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          tags: selenium-tests:latest
-          load: true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-
-      - name: Run Selenium tests and store Allure results
+      - name: Install dependencies
         run: |
-          mkdir -p reports/allure-results
-          docker run --rm \
-            -v ${{ github.workspace }}/reports/allure-results:/app/allure-results \
-            selenium-tests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install allure-pytest allure-commandline
 
-      - name: Generate Allure test report with history
-        uses: andgineer/allure-report@v3.6
-        id: allure-report
-        if: always()
+      - name: Run tests with Allure results
+        run: |
+          pytest --alluredir=reports/allure-results --browser=chrome --headless
+
+      - name: Generate Allure report
+        run: |
+          allure generate reports/allure-results -o reports/allure-report --clean
+
+      - name: Upload Allure report artifact (opcional)
+        uses: actions/upload-artifact@v3
         with:
-          allure-results: reports/allure-results
-          website: gh-pages-dir
-          reports-site-path: builds/tests
+          name: allure-report
+          path: reports/allure-report
 
-      - name: Publish Allure report to GitHub Pages
+      - name: Deploy Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ always() && (steps.allure-report.outcome == 'success') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ${{ steps.allure-report.outputs.reports-site }}
-          destination_dir: ${{ steps.allure-report.outputs.reports-site-path }}
+          publish_dir: reports/allure-report
