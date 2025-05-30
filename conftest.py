@@ -2,6 +2,8 @@ import os
 import pytest
 import allure
 from drivers.driver_factory import get_driver
+from pages.home_page import HomePage
+
 
 def pytest_addoption(parser):
     parser.addoption("--browser", 
@@ -41,3 +43,10 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, "rep_" + rep.when, rep)
+
+@pytest.fixture
+def home_page(browser):
+    """Devuelve una instancia de HomePage con la homepage ya cargada."""
+    home = HomePage(browser)
+    home.load()
+    return home
