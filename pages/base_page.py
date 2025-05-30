@@ -26,3 +26,15 @@ class BasePage:
         return WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(locator)
             )
+    
+    def get_error_message(self, selector, expected_er_msg=""):
+        logger.info(f"Looking for error message: '{expected_er_msg}'")
+        try:
+            element = self.wait_for_element_visible(selector)
+            actual_text = element.text
+            logger.info(f"Found error message: '{actual_text}'")
+            return actual_text
+        except Exception as e:
+            logger.error(f"Could not find error message: {e}")
+            self.driver.save_screenshot("logs/error_message_not_found.png")
+            raise
