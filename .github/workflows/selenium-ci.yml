@@ -6,8 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
-  pages: write
+  contents: write  # Needed to push to gh-pages
   id-token: write
 
 jobs:
@@ -51,18 +50,18 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Allure report to Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
         with:
-          path: reports/allure-report
-          retention-days: 1
-          name: github-pages   
+          gh_pages: gh-pages
+          allure_results: reports/allure-results
+          allure_history: allure-history
 
-  # deploy:
-  #   if: github.ref == 'refs/heads/main'
-  #   needs: test
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       uses: actions/deploy-pages@v3
+      - name: Publish test report to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-history
+          publish_branch: gh-pages
