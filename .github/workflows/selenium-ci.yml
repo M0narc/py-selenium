@@ -6,8 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write  # Needed to push to gh-pages
-  id-token: write
+  contents: write  # Required to push to gh-pages
 
 jobs:
   test:
@@ -50,18 +49,11 @@ jobs:
             exit 1
           fi
 
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
-        if: always()
-        with:
-          gh_pages: gh-pages
-          allure_results: reports/allure-results
-          allure_history: allure-history
-
-      - name: Publish test report to gh-pages
+      - name: Publish Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-history
           publish_branch: gh-pages
+          publish_dir: reports/allure-report
+          commit_message: "chore: deploy Allure report 🚀"
