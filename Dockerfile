@@ -35,4 +35,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . .
 
-CMD ["pytest", "--browser=chrome", "--headless", "--alluredir=allure-results"]
+CMD ["sh", "-c", "pytest --browser=chrome --headless --alluredir=reports/allure-results && allure generate reports/allure-results -o reports/allure-report --clean"]
