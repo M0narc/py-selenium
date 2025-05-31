@@ -62,6 +62,8 @@ Uso de .env para credenciales
 
 Test Data Factories (con Faker)
 
+# Gitpages
+https://m0narc.github.io/py-selenium/
 
 # Esqueleto
 ```
