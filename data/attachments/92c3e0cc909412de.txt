@@ -1,0 +1,7 @@
+INFO     pages.home_page:home_page.py:18 Navegando a la homepage de saucedemo
+INFO     pages.base_page:base_page.py:12 Open URL: https://www.saucedemo.com
+INFO     pages.base_page:base_page.py:17 Page title: Swag Labs
+INFO     pages.home_page:home_page.py:22 Waiting for login form
+INFO     pages.home_page:home_page.py:25 Login form has been found
+INFO     pages.home_page:home_page.py:33 Try to log in with the given username and password: standard_user, secret_sauce
+INFO     pages.base_page:base_page.py:22 Current URL: https://www.saucedemo.com/inventory.html
