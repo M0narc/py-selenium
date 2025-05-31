@@ -1,5 +1,0 @@
-INFO     pages.home_page:home_page.py:18 Navegando a la homepage de saucedemo
-INFO     pages.base_page:base_page.py:12 Open URL: https://www.saucedemo.com
-INFO     pages.home_page:home_page.py:33 Try to log in with the given username and password: invalid_user, asdasdsa
-INFO     pages.base_page:base_page.py:31 Looking for error message: 'Epic sadface: Username and password do not match any user in this service'
-INFO     pages.base_page:base_page.py:35 Found error message: 'Epic sadface: Username and password do not match any user in this service'
