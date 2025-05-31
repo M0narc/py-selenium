@@ -1,1 +1,0 @@
-# the home page is the login page now and I'll use it as the same page

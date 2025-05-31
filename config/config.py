@@ -1,1 +1,0 @@
-# Variables de entorno, rutas, etc.
