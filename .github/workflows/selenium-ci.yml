@@ -29,6 +29,14 @@ jobs:
           mkdir -p reports/allure-results
           pytest --alluredir=reports/allure-results
 
+      - name: Create Allure environment file
+        run: |
+          echo "BUILD_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> reports/allure-results/environment.properties
+          echo "GIT_BRANCH=${{ github.ref_name }}" >> reports/allure-results/environment.properties
+          echo "GIT_COMMIT_ID=${{ github.sha }}" >> reports/allure-results/environment.properties
+          echo "GIT_COMMIT_MESSAGE=${{ github.event.head_commit.message }}" >> reports/allure-results/environment.properties
+          echo "GIT_COMMIT_AUTHOR_NAME=${{ github.event.head_commit.author.name }}" >> reports/allure-results/environment.properties
+
       - name: Install Allure
         run: |
           wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
