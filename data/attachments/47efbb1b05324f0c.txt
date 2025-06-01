@@ -1,0 +1,5 @@
+2025-06-01 22:51:54,121 | INFO | pages.home_page | Navegando a la homepage de saucedemo
+2025-06-01 22:51:54,121 | INFO | pages.base_page | Open URL: https://www.saucedemo.com
+2025-06-01 22:51:54,312 | INFO | pages.home_page | Try to log in with the given username and password: invalid_user, asdasdsa
+2025-06-01 22:51:54,554 | INFO | pages.base_page | Looking for error message: 'Epic sadface: Username and password do not match any user in this service'
+2025-06-01 22:51:54,580 | INFO | pages.base_page | Found error message: 'Epic sadface: Username and password do not match any user in this service'

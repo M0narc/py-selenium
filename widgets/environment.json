@@ -1,1 +1,1 @@
-[]
+[{"values":["https://github.com/M0narc/py-selenium/actions/runs/15380283285"],"name":"BUILD_URL"},{"values":["main"],"name":"GIT_BRANCH"},{"values":["e083e7deb01e9c7a6271ba9870026cf53c72f325"],"name":"GIT_COMMIT_ID"},{"values":["environment variables for ci"],"name":"GIT_COMMIT_MESSAGE"},{"values":["M0narc"],"name":"GIT_COMMIT_AUTHOR_NAME"}]

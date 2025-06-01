@@ -1,0 +1,7 @@
+2025-06-01 22:51:52,989 | INFO | pages.home_page | Navegando a la homepage de saucedemo
+2025-06-01 22:51:52,989 | INFO | pages.base_page | Open URL: https://www.saucedemo.com
+2025-06-01 22:51:53,305 | INFO | pages.base_page | Page title: Swag Labs
+2025-06-01 22:51:53,305 | INFO | pages.home_page | Waiting for login form
+2025-06-01 22:51:53,331 | INFO | pages.home_page | Login form has been found
+2025-06-01 22:51:53,331 | INFO | pages.home_page | Try to log in with the given username and password: standard_user, secret_sauce
+2025-06-01 22:51:53,597 | INFO | pages.base_page | Current URL: https://www.saucedemo.com/inventory.html
